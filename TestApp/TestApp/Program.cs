@@ -19,6 +19,17 @@ namespace TestApp
             Console.WriteLine("Предыдущий: " + l.Previous);
             
             Console.ReadLine();
+
+            l.MoveNext(1);
+            l.MoveBack(2);
+            
+
+            Console.WriteLine("Голова: " + l.Head);
+            Console.WriteLine("Текущий: " + l.Current);
+            Console.WriteLine("Следующий: " + l.Next);
+            Console.WriteLine("Предыдущий: " + l.Previous);
+
+            Console.ReadLine();
         }
     }
 }

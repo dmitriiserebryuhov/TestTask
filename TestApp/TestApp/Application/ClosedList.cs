@@ -6,34 +6,76 @@ using System.Threading.Tasks;
 
 namespace TestApp.Application
 {
+    /// <summary>
+    /// Реализация замкнутой коллекции объектов типа T.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class ClosedList<T> : List<T>, IClosedList<T>
     {
         private const string emptyListMessage = "Лист не содержит элементов!";
+        private const string negativeStep = "Число шагов долно быть положительным числом!";
 
-        public void MoveNext(int x = 1)
-        {
-            index += x;
-            IndexBoundary();          
-        }
+        /// <summary>
+        /// Индекс текущего элемента
+        /// </summary>
+        private int index = 0;
 
-        public void MoveBack(int x = 1)
+        /// <summary>
+        /// Перемещение вперед по элементам коллекции на количесво шагов равное step.
+        /// step не может быть отрицательным числом.
+        /// </summary>
+        /// <param name="step">Количество шагов.</param>
+        public void MoveNext(int step = 1)
         {
-            index -= x;
-            IndexBoundary();            
-        }
+            if(this.Count == 0)
+                throw new Exception(emptyListMessage);
 
-        private void IndexBoundary()
-        {
-            if (index < 0)
+            if (step < 0)
+                throw new Exception(negativeStep);
+
+            index += step;            
+            
+            while (index >= this.Count)
             {
-                index *= -1;
-                index %= this.Count;
-                index = this.Count - index;
+                HeadReached += GetMessage();
+                HeadReached?.Invoke(this, this.Head);
+                index -= this.Count();
             }
-            else
-                index %= this.Count;
         }
 
+        /// <summary>
+        /// Перемещение назад по элементам коллекции на количесво шагов равное step.
+        /// step не может быть отрицательным числом.
+        /// </summary>
+        /// <param name="step">Количество шагов.</param>
+        public void MoveBack(int step = 1)
+        {
+            if (this.Count == 0)
+                throw new Exception(emptyListMessage);
+
+            if (step < 0)
+                throw new Exception(negativeStep);
+
+            index -= step;
+
+            while (index < 0)
+            {
+                if (index + step != 0)
+                    HeadReached += GetMessage();                
+                HeadReached?.Invoke(this, this.Head);
+                index += this.Count();
+            }
+
+            if(index == 0)
+            {
+                HeadReached += GetMessage();
+                HeadReached?.Invoke(this, this.Head);
+            }
+        }
+
+        /// <summary>
+        /// Возвращает элемент коллекции с нулевым индексом.
+        /// </summary>
         public T Head 
         {
             get
@@ -45,6 +87,9 @@ namespace TestApp.Application
             }
         }
 
+        /// <summary>
+        /// Возвращает текущий элемент.
+        /// </summary>
         public T Current 
         {
             get 
@@ -56,6 +101,9 @@ namespace TestApp.Application
             } 
         }
 
+        /// <summary>
+        /// Возвращает предыдущий элемент.
+        /// </summary>
         public T Previous 
         { 
             get
@@ -72,6 +120,9 @@ namespace TestApp.Application
             }
         }
 
+        /// <summary>
+        /// Возвращает следующий элемент.
+        /// </summary>
         public T Next 
         { 
             get
@@ -87,14 +138,20 @@ namespace TestApp.Application
                     throw new Exception(emptyListMessage);
             }
         }
-
-        private int index = 0;
-
-        private void GetMessage()
+        
+        /// <summary>
+        /// Выводит сообщение о достижении головного элемента.
+        /// </summary>
+        /// <returns></returns>
+        private EventHandler<T> GetMessage()
         {
             Console.WriteLine("Достигнут головной элемент");
+            return null;
         }
 
+        /// <summary>
+        /// Событие, которое вызывается при прохождении через элемент с нулевым индексом при движении в любом направлении.
+        /// </summary>
         public event EventHandler<T> HeadReached;
     }    
 }

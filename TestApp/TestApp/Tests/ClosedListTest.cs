@@ -24,6 +24,48 @@ namespace TestApp.Tests
         }
 
         [Fact]
+        public void ClosedList_EmptyInitMoveNext_ThrownException()
+        {
+            // Arrange
+            ClosedList<string> list = new ClosedList<string>();
+
+            // Act
+            Action act = () => list.MoveNext();
+
+            // Assert
+            Exception exception = Assert.Throws<Exception>(act);
+            Assert.Equal("Лист не содержит элементов!", exception.Message);
+        }
+
+        [Fact]
+        public void ClosedList_EmptyInitMoveBack_ThrownException()
+        {
+            // Arrange
+            ClosedList<string> list = new ClosedList<string>();
+
+            // Act
+            Action act = () => list.MoveBack();
+
+            // Assert
+            Exception exception = Assert.Throws<Exception>(act);
+            Assert.Equal("Лист не содержит элементов!", exception.Message);
+        }
+
+        [Fact]
+        public void ClosedList_EmptyInitGetField_ThrownException()
+        {
+            // Arrange
+            ClosedList<string> list = new ClosedList<string>();
+
+            // Act
+            Action act = () => Console.WriteLine(list.Current);
+
+            // Assert
+            Exception exception = Assert.Throws<Exception>(act);
+            Assert.Equal("Лист не содержит элементов!", exception.Message);
+        }
+
+        [Fact]
         public void ClosedList_MoveNext_RightFieldValues()
         {
             // Arrange
@@ -53,7 +95,7 @@ namespace TestApp.Tests
             Assert.Equal("three", list.Current);
             Assert.Equal("four", list.Next);
             Assert.Equal("two", list.Previous);
-        }
+        }        
 
         [Fact]
         public void ClosedList_MoveBack_RightFieldsValues()
@@ -72,35 +114,32 @@ namespace TestApp.Tests
         }
 
         [Fact]
-        public void ClosedList_NegativeMoveNext_RightFieldsValues()
+        public void ClosedList_NegativeMoveNext_ThrownException()
         {
             // Arrange
             ClosedList<int> list = new ClosedList<int>() { 1, 2, 3, 4, 5 };
 
             // Act
-            list.MoveNext(-12);
+            Action act = () => list.MoveNext(-3);
 
             // Assert
-            Assert.Equal(1, list.Head);
-            Assert.Equal(4, list.Current);
-            Assert.Equal(5, list.Next);
-            Assert.Equal(3, list.Previous);
+            Exception exception = Assert.Throws<Exception>(act);
+            Assert.Equal("Число шагов долно быть положительным числом!", exception.Message);
         }
 
         [Fact]
-        public void ClosedList_NegativeMoveBack_RightFieldsValues()
+        public void ClosedList_NegativeMoveBack_ThrownException()
         {
             // Arrange
             ClosedList<int> list = new ClosedList<int>() { 1, 2, 3, 4, 5 };
 
             // Act
-            list.MoveBack(-9);
+            Action act = () => list.MoveBack(-5);
 
             // Assert
-            Assert.Equal(1, list.Head);
-            Assert.Equal(5, list.Current);
-            Assert.Equal(1, list.Next);
-            Assert.Equal(4, list.Previous);
+            Exception exception = Assert.Throws<Exception>(act);
+            Assert.Equal("Число шагов долно быть положительным числом!", exception.Message);
+
         }
 
         [Fact]
@@ -110,10 +149,10 @@ namespace TestApp.Tests
             ClosedList<int> list = new ClosedList<int>() { 1, 2, 3, 4, 5 };
 
             // Act
-            list.MoveNext(23);
+            list.MoveNext(21);
             list.MoveBack(15);
-            list.MoveNext(-8);
-            list.MoveBack(-12);
+            list.MoveNext(8);
+            list.MoveBack(12);
             list.MoveNext(0);
 
             // Assert
